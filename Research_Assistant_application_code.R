@@ -21,22 +21,22 @@ query.result1 <- tbl(src = con, from = "studies") %>%       # Database connectio
   filter(phase %in% c("Phase 2", "Phase 3"),                # Only include phase 2 and 3 trials
          overall_status %in% "Completed") %>%               # That are completed
   left_join(y = tbl(src = con, from = "calculated_values"), # Join calculated values table to studies table 
-            by = "nct_id") %>%                              # By unique trial ID
+            by = "nct_id") %>%                              # Using unique trial ID
   filter(registered_in_calendar_year == 2019) %>%           # Only including trials registered in 2019
   collect()                                                 # Store query 
 
 # Create summary comparison between phase 2 and 3 clinical trials 
 query.summary1 <- query.result1 %>%                                                      # Act on query result object
   group_by(phase) %>%                                                                    # Group by trial phase
-  summarise(Number_of_trials = n(),                                                      # Number of trials in each phase
+  summarise(Number_of_trials = n(),                                                      # Number of Phase 2 & 3 trials 
             Total_enrollment = sum(enrollment),                                          # Total number of enrolled participants   
             Median_enrollment = median(enrollment),                                      # Median number of enrolled participants p/trial
             Median_number_of_arms = median(number_of_arms),                              # Median number of arms p/trial
             Total_FDA_regulated_drugs = sum(is_fda_regulated_drug == "TRUE", na.rm = T), # Total number of FDA regulated drugs used 
-            Average_duration = mean(completion_date - start_date))                       # Average trial duration 
+            Average_duration (days) = mean(completion_date - start_date))                # Average trial duration 
 
 # Save summary as csv file
-write.csv(query.summary1, file = "query_summary.csv")
+write.csv(query.summary1, file = "summary_table.csv")
 
 
 
@@ -58,9 +58,10 @@ head(query.result2)
 
 #' *NOTE:*
 #' 
-#' Only difference between the results of the two methods is query.result1 has 82 columns 
-#' while query.result2 has 83 columns due to nct_id being duplicated (from studies and 
-#' calculated_values tables).
+#' query.result1 has 82 columns while query.result2 has 83 columns due to nct_id being 
+#' duplicated (from studies and calculated_values tables).
+#' 
+#' "Select" can also be used in both query methods to return only specified columns.
 #' 
 #' I have only produced one summary table using the dplyr query method to minimise
 #' repetitive code. 
