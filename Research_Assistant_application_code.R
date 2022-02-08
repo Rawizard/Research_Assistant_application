@@ -33,7 +33,7 @@ query.summary1 <- query.result1 %>%                                             
             Median_enrollment = median(enrollment),                                      # Median number of enrolled participants p/trial
             Median_number_of_arms = median(number_of_arms),                              # Median number of arms p/trial
             Total_FDA_regulated_drugs = sum(is_fda_regulated_drug == "TRUE", na.rm = T), # Total number of FDA regulated drugs used 
-            Average_duration (days) = mean(completion_date - start_date))                # Average trial duration 
+            Average_duration_days = mean(completion_date - start_date))                  # Average trial duration 
 
 # Save summary as csv file
 write.csv(query.summary1, file = "summary_table.csv")
